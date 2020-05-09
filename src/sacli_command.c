@@ -1,23 +1,28 @@
-#include <stdlib.h>
-
 #include "sacli_command.h"
 
 sacli_command *sacli_command_create(
     char *name,
     char *alias,
-    char *usage_text)
+    char *usage_text,
+    bool has_default_help_action)
 {
     sacli_command *command = (sacli_command *)malloc(sizeof(sacli_command));
     command->sub_commands = (sacli_command **)calloc(SACLI_DEFAULT_SUB_COMMANDS_CAPACITY, sizeof(sacli_command));
     command->sub_command_capacity = SACLI_DEFAULT_SUB_COMMANDS_CAPACITY;
-    command->has_sub_commands = false;
+    command->has_default_help_action = has_default_help_action;
+    command->has_sub_commands = has_default_help_action;
+    command->usage_text = usage_text;
     command->sub_command_size = 0;
     command->alias = alias;
     command->name = name;
 
     command->add_sub_command = sacli_command_add_sub_command;
     command->add_sub_command_raw = sacli_command_add_sub_command_raw;
-
+    
+    if(command->has_default_help_action) {
+        command->add_sub_command_raw(command, "-help", "-h", usage_text, false, sacli_command_default_help_action);
+    } 
+    
     return command;
 }
 
@@ -25,9 +30,10 @@ sacli_command *sacli_command_create_raw(
     char *name,
     char *alias,
     char *usage_text,
-    void (*action)(char **next_args, unsigned next_args_size))
+    bool has_default_help_action,
+    void (*action)(sacli_command *command, char **next_args, unsigned next_args_size))
 {
-    sacli_command *command = sacli_command_create(name, alias, usage_text);
+    sacli_command *command = sacli_command_create(name, alias, usage_text, has_default_help_action);
     command->action = action;
 
     return command;
@@ -55,9 +61,10 @@ void sacli_command_add_sub_command_raw(
     char *name,
     char *alias,
     char *usage_text,
-    void (*action)(char **next_args, unsigned next_args_size))
+    bool has_default_help_action,
+    void (*action)(sacli_command *command, char **next_args, unsigned next_args_size))
 {
-    sacli_command *sub_command = sacli_command_create_raw(name, alias, usage_text, action);
+    sacli_command *sub_command = sacli_command_create_raw(name, alias, usage_text, has_default_help_action, action);
     sacli_command_add_sub_command(command, sub_command);
 }
 
@@ -79,3 +86,12 @@ void sacli_command_free(
     free(commands);
     commands = NULL;
 }
+
+extern void sacli_command_default_help_action(
+    sacli_command *command, 
+    char **next_args, 
+    unsigned next_args_size) 
+{
+    printf("%s\n", command->usage_text);
+}
+

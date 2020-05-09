@@ -3,6 +3,10 @@
 
 #define DEFAULT_SAGLI_COMMANDS_CAPACITY 1 << 4
 
+#include <stdarg.h>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "sacli_command.h"
 
 typedef struct sacli {

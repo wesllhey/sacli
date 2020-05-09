@@ -1,6 +1,10 @@
 #ifndef __SACLI_PARSER__
 #define __SACLI_PARSER__
 
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
 #include "sacli.h"
 
 typedef struct sacli_parser {

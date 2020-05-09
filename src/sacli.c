@@ -1,7 +1,3 @@
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "sacli.h"
 
 sacli *sacli_init()
@@ -60,7 +56,7 @@ void sacli_run(sacli *sacli, const int argc, char **argv)
         sacli_command *command = parser->command_found;
 
         if (command->action && command->action != NULL) {
-            command->action(parser->next_args, parser->next_args_size);
+            command->action(command, parser->next_args, parser->next_args_size);
         }
     }
     else {

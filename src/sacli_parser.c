@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-
 #include "sacli_parser.h"
 
 sacli_parser *sacli_parser_extract(
@@ -16,7 +12,9 @@ sacli_parser *sacli_parser_extract(
         for (; last_index_found < argc; last_index_found++) {
             if (command != NULL) {
                 if (command->has_sub_commands) {
-                    command = sacli_parser_find_command_by_arg(command->sub_commands, command->sub_command_size, argv[last_index_found]);
+                    command = sacli_parser_find_command_by_arg(
+                        command->sub_commands, command->sub_command_size, argv[last_index_found]);
+                    continue;
                 }
                 break;
             }
